@@ -2,10 +2,12 @@ import json
 import requests
 
 API_URL="https://test.g4b.cn/rpa/api"
+# API_URL="http://127.0.0.1:8080"
+
 
 # 获取用户信息
-def get_user(phone:str):
-    response=requests.get(f"{API_URL}/user/{phone}")
+def get_user(userid:str):
+    response=requests.get(f"{API_URL}/user/{userid}")
     if response.status_code==200:
         response=response.json()
         return response["data"]
@@ -21,9 +23,9 @@ def put_user(data:dict):
     else:
         return False
 
-# 使用手机号搜索对应的任务输入数据
-def get_task_data(phone:str):
-    params={"key":"make_invoice_"+phone}
+# 获取记忆
+def get_memory(userid:str):
+    params={"key":"memory_"+userid}
     response=requests.get(f"{API_URL}/redis/value",params=params)
 
     if response.status_code==200:
@@ -34,19 +36,38 @@ def get_task_data(phone:str):
         print(response.text)
         return {}
     
-# 设置任务输入数据
-def set_task_data(phone:str,data:dict):
-    data={"key":"make_invoice_"+phone,"value":json.dumps(data)}
-    response=requests.post(f"{API_URL}/redis/value",json=data)
+# 存储聊天记录
+def add_message(data:dict):
+    response=requests.post(f"{API_URL}/message",json=data)
+    if response.status_code==200:
+        return True
+    else:
+        return False
+
+# 获取用户最近的消息记录
+def get_message(userid:str):
+    try:
+        response=requests.get(f"{API_URL}/message/new/{userid}")
+        if response.status_code==200:
+            response= response.json()
+            return response["data"]
+        else:
+            return []
+    except Exception as e:
+        print("获取最近的消息记录失败",e)
+        return []
+    
+# 润色消息
+def polish_message(data:dict):
+    response=requests.post(f"{API_URL}/message/polish",json=data)
     if response.status_code==200:
         return True
     else:
         return False
 
 
-
 # 创建开票任务
-def create_task(data:dict):
+def create_make_invoice(data:dict):
     data={
         "type":"make_invoice",
         "input":data        
@@ -67,8 +88,4 @@ def create_task(data:dict):
 
 
 if __name__=="__main__":
-    
-    # print(set_task_data("13076785712",{"name":"张三"}))
-    print(get_task_data("admin_flx"))
-    # print(put_user({"Phone":"13800138000","CompanyName":"广州逐辉贸易有限公司"}))
-    # print(get_user("13800138000"))
+    print(get_message("admin_flx"))
