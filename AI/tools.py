@@ -1,9 +1,9 @@
-main=[
+make_invoice=[
         {
             "type": "function",
             "function": {
                 "name": "make_invoice",
-                "description": "开票函数，根据用户提供的信息开具发票，空值请用空字符串''代替",
+                "description": "当你想开票时非常有用，注意：禁止暴露内部参数，空值请用空字符串''代替",
                 "parameters": {
                     "type": "object",
                     "properties": {
@@ -93,5 +93,7 @@ main=[
                     ]
                 }
             }
-        }
+        },
+
     ]
+main=make_invoice

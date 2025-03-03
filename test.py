@@ -3,7 +3,7 @@ import time
 messages=[
         {
             "role": "user",
-            "content": "发票抬头:李子柒 金额:123 餐费 普通发票"
+            "content": "抬头:穆君; 金额:10.00; 邮箱:ngzddbe-19219@kfp.meituan.com 普通发票 餐费"
         }
     ]
 

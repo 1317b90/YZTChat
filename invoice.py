@@ -1,14 +1,30 @@
 import AI
 import models
 import tell
-
+import json
 # 创建开票任务
-def create_task(data:dict):
-    result=tell.create_make_invoice(data)
-    if result:
-        return "开票任务创建成功"
-    return True
+def create_task(arguments:models.Invoice,M:models.Message):
+    arguments.userid=M.userid
+    arguments.serviceid=M.serviceid
+
+    # 如果不预览发票,将发票代码置为空
+    if not arguments.is_preview:
+        arguments.invoice_code=""
+
+    # 如果是群聊，则不需要预览
+    if arguments.is_group:
+        arguments.is_preview=False
+
+    # 如果邮箱不为空，去除<a>
+    if arguments.buy_email:
+        arguments.buy_email=arguments.buy_email.replace("<a>", "").replace("</a>", "")
     
+    print(arguments)
+    # 创建开票任务
+    result=tell.create_make_invoice(arguments.model_dump())
+    if result !=True:
+        raise result       
+
 
 # 开票准备
 def prepare(phone:str):
